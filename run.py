@@ -1,7 +1,8 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from menu import menu_items
 
-# APIs connected to enable interaction with spreadsheet
+# Connect APIs to enable interaction with spreadsheet
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -11,14 +12,6 @@ SCOPE = [
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('food_orders')
-
-class MenuItem:
-    '''
-    Create an instance of MenuItem.
-    '''
-    def __init__(self, foods, price):
-        self.foods = foods
-        self.price = price
 
 class Order:
     '''
@@ -37,11 +30,7 @@ class Order:
         '''
         order = []
         for item in self.items:
-            order.extend(item.foods)
+            order.extend(menu_items[item]['foods'])
         return order
 
-test = MenuItem(['item1', 'item2', 'item3'], 12)
-test2 = MenuItem(['item4', 'item5', 'item6'], 12)
-
-new_order = Order('Geoffrey', [test, test2])
-print(new_order.confirm())
+# new_order = Order(name, items)
