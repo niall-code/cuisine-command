@@ -1,5 +1,7 @@
 import gspread
 from google.oauth2.service_account import Credentials
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import WordCompleter
 from menu import menu_items
 
 # Connect APIs to enable interaction with spreadsheet
@@ -32,5 +34,10 @@ class Order:
         for item in self.items:
             order.extend(menu_items[item]['foods'])
         return order
+
+# Takes user input and gives autocomplete suggestions from the menu
+menu = WordCompleter(menu_items)
+text = prompt('Enter menu item: ', completer=menu)
+print(text)
 
 # new_order = Order(name, items)

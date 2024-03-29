@@ -64,10 +64,19 @@ I spent several hours researching possible ways of doing this and experimenting 
 
 I looked at a number of options. For a while, [fast-autocomplete](https://pypi.org/project/fast-autocomplete) looked a promising one, but it seemed to only provide a suggestions list rather than actually completing a user input. I tried to combine it with [pick](https://github.com/wong2/pick) to finish the task, but ran into difficulties. Also, even if it had succeeded, live suggestions to select from while typing are far preferable.
 
-I eventually found [this documentation](https://python-prompt-toolkit.readthedocs.io/en/stable/pages/asking_for_input.html#:~:text=Autocompletion%20can%20be%20added). The solution it offered matched what I was searching for quite well.
+I eventually found [this documentation](https://python-prompt-toolkit.readthedocs.io/en/stable/pages/asking_for_input.html#:~:text=Autocompletion%20can%20be%20added). The solution it offered matched what I was searching for quite well, and my testing of it was very promising.
+
+<img src="screencaps/test-of-auto.webp" alt="testing the prompt toolkit module" width="750px">
+
+(This screen capture was taken with CodeSnap.)
 
 ### Writing the menu
 
 I had been going to have my menu mirror a local takeaway's menu, as I would not have known what dishes and prices to make up. The menu had hundreds of dishes though, as did other menus that I looked for online. Typing out or even copy-pasting then editing hundreds of items would have been laborious and a time waster delaying writing the actual code of my project. Fifteen items should be sufficient to demonstrate the concept. Any number more could be added easily enough if the program ended up as going to be used in real life. I was paralysed by indecision of which items to arbitarily pick, so a relative circled some for me and I just went with those.
 
-I wrote the menu as a dictionary assigned to a `menu_items` variable in `menu.py`. Rather than having a complex dictionary of dictionaries, it is simply dishes as keys and prices as values.
+I wrote the menu as a dictionary assigned to a `menu_items` variable in `menu.py`. Rather than having a complex dictionary of dictionaries, it is simply dishes as keys and prices as values. Each dish has an item number as the start of the string of its key. The hypothetical customer would say an item number, the worker using the program would type the number, and would have a chance to read about the dish description to confirm it before selecting it.
+
+### Adding user input functionality
+
+I did a `pip install prompt_toolkit`, imported it at the top of `run.py`, and added an autocompleting user input as taught in the documentation mentioned and linked above, and as already tested by myself like described. I had also checked that it would accept a dictionary from me as well just a list.
+
