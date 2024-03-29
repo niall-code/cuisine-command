@@ -20,24 +20,19 @@ class Order:
     Create an instance of Order,
     which shall be assigned to new_order.
     '''
-    def __init__(self, name, items):
-        self.name = name
-        self.items = items
+    def __init__(self):
+        self.name = ''
+        self.items = []
 
-    def confirm(self):
-        '''
-        For each MenuItem instance found in the list assigned to new_order's items attribute,
-        append all list values from that MenuItem's foods attribute to the order variable's
-        initially empty list. Return the new list.
-        '''
-        order = []
+    def calculate_cost(self):
+        total_cost = 0
         for item in self.items:
-            order.extend(menu_items[item]['foods'])
-        return order
+            total_cost += menu_items[item]
+        return f'£{total_cost:.2f}'
 
 # Takes user input and gives autocomplete suggestions from the menu
 menu = WordCompleter(menu_items)
-text = prompt('Enter menu item: ', completer=menu)
-print(text)
+item = prompt('Enter menu item: ', completer=menu)
 
-# new_order = Order(name, items)
+new_order = Order()
+new_order.items.append(item)

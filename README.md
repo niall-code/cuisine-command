@@ -80,3 +80,10 @@ I wrote the menu as a dictionary assigned to a `menu_items` variable in `menu.py
 
 I did a `pip install prompt_toolkit`, imported it at the top of `run.py`, and added an autocompleting user input as taught in the documentation mentioned and linked above, and as already tested by myself like described. I had also checked that it would accept a dictionary from me as well just a list.
 
+### Add calculate_cost() method
+
+I deleted Order's confirm method, which was increasingly less relevant to the direction my project was moving in. I tweaked Order's init method to suit my new thoughts about input collection and sequence of events.
+
+I added a line of code that will append inputted items to an empty list in the items attribute of new_order, the current instance of Order.
+
+I added a `calculate_cost( )` method into the Order class that will retrieve the price of each of those items and add them together, so that the program user/restaurant worker can quote the customer a total cost over the phone and verbally confirm their acceptance of the amount they will be charged.
