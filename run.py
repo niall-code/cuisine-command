@@ -33,7 +33,7 @@ class Order:
                 break
             else:
                 try:
-                    item in menu_items
+                    menu_items[item]
                 except:
                     print('Sorry, that is not a menu item.')
                 else:
@@ -48,6 +48,6 @@ class Order:
 def main():
     new_order = Order()
     new_order.take_order()
-    new_order.calculate_cost()
+    print(new_order.calculate_cost())
 
 main()
