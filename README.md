@@ -87,3 +87,5 @@ I deleted Order's confirm method, which was increasingly less relevant to the di
 I added a line of code that will append inputted items to an empty list in the items attribute of new_order, the current instance of Order.
 
 I added a `calculate_cost( )` method into the Order class that will retrieve the price of each of those items and add them together, so that the program user/restaurant worker can quote the customer a total cost over the phone and verbally confirm their acceptance of the amount they will be charged.
+
+### Add take_order method

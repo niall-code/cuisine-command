@@ -24,15 +24,30 @@ class Order:
         self.name = ''
         self.items = []
 
+    def take_order(self):
+        # Takes user input and gives autocomplete suggestions from the menu
+        menu = WordCompleter(menu_items)
+        while True:
+            item = prompt('Enter menu item: ', completer=menu)
+            if item == 'x':
+                break
+            else:
+                try:
+                    item in menu_items
+                except:
+                    print('Sorry, that is not a menu item.')
+                else:
+                    self.items.append(item)
+
     def calculate_cost(self):
         total_cost = 0
         for item in self.items:
             total_cost += menu_items[item]
         return f'£{total_cost:.2f}'
 
-# Takes user input and gives autocomplete suggestions from the menu
-menu = WordCompleter(menu_items)
-item = prompt('Enter menu item: ', completer=menu)
+def main():
+    new_order = Order()
+    new_order.take_order()
+    new_order.calculate_cost()
 
-new_order = Order()
-new_order.items.append(item)
+main()
