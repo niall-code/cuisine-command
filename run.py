@@ -38,6 +38,7 @@ class Order:
                     print('Sorry, that is not a menu item.')
                 else:
                     self.items.append(item)
+        return self.items
 
     def calculate_cost(self):
         total_cost = 0
@@ -55,11 +56,21 @@ class Order:
             else:
                 self.name = name
                 break
+    
+    def make_record(self, cost):
+        target_worksheet = SHEET.worksheet('record')
+        target_worksheet.append_row([self.name, ', '.join(self.items), cost])
+
+def to_prepare(items):
+    for item in items:
+        print(item)
 
 def main():
     new_order = Order()
-    new_order.take_order()
-    print(new_order.calculate_cost())
+    items = new_order.take_order()
+    cost = new_order.calculate_cost()
     new_order.take_name()
+    new_order.make_record(cost)
+    to_prepare(items)
 
 main()
