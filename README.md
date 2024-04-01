@@ -88,4 +88,10 @@ I added a line of code that will append inputted items to an empty list in the i
 
 I added a `calculate_cost( )` method into the Order class that will retrieve the price of each of those items and add them together, so that the program user/restaurant worker can quote the customer a total cost over the phone and verbally confirm their acceptance of the amount they will be charged.
 
-### Add take_order method
+### Add take_order() method
+
+I added a `take_order( )` method into the Order class, based on the previously outlined user input functionality.
+
+### Add take_name() method
+
+I added a `take_name( )` method into the Order class.

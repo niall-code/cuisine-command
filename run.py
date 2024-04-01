@@ -44,10 +44,22 @@ class Order:
         for item in self.items:
             total_cost += menu_items[item]
         return f'£{total_cost:.2f}'
+    
+    def take_name(self):
+        while True:
+            name = input('Enter name: ')
+            try:
+                len(name) >= 1
+            except:
+                print('A collection name is required.')
+            else:
+                self.name = name
+                break
 
 def main():
     new_order = Order()
     new_order.take_order()
     print(new_order.calculate_cost())
+    new_order.take_name()
 
 main()
