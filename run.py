@@ -1,10 +1,18 @@
+# Import necessary libraries and modules:
+# To enable API use.
 import gspread
 from google.oauth2.service_account import Credentials
+
+# For autocompletion of user input.
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
+
+# The product menu - from supplementary .py file within project.
 from menu import menu_items
 
-# Connect APIs to enable interaction with spreadsheet
+
+# Connect APIs to enable interaction with spreadsheet.
+# As demonstrated in Code Institute's Python Essentials walkthrough project.
 CREDS = Credentials.from_service_account_file('creds.json')
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -15,57 +23,102 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('food_orders')
 
+
 class Order:
     '''
     Create an instance of Order,
     which shall be assigned to new_order.
     '''
     def __init__(self):
+        # Values initially empty string and list, to be replaced/appended to by user inputs.
         self.name = ''
         self.items = []
 
     def take_order(self):
-        # Takes user input and gives autocomplete suggestions from the menu
+        '''
+        Take user input, with autocomplete suggestions from the menu.
+        Repeat for each item customer orders. User enters x to end loop.
+        '''
+
+        # prompt_toolkit was created primarily by Jonathan Slenders (https://github.com/jonathanslenders).
+        # https://python-prompt-toolkit.readthedocs.io/en/stable/pages/asking_for_input.html#autocompletion
+
         menu = WordCompleter(menu_items)
+
         while True:
-            item = prompt('Enter menu item: ', completer=menu)
+
+            # Take user input of the first/next ordered menu item.
+            # User should type menu item's dish number, press down arrow to highlight correct suggestion, then press Enter.
+            item = prompt('Enter menu item:\n', completer=menu)
+
+            # If user enters x, exit loop to resume progression through the script.
             if item == 'x':
                 break
             else:
                 try:
+                    # Check whether input is a valid menu item.
                     menu_items[item]
                 except:
                     print('Sorry, that is not a menu item.')
                 else:
+                    # If input was valid, append to list value of items attribute.
                     self.items.append(item)
+
         return self.items
 
     def calculate_cost(self):
+        '''
+        Get prices of ordered items from dictionary in menu module.
+        Sum the prices to give a total cost.
+        '''
         total_cost = 0
+
         for item in self.items:
             total_cost += menu_items[item]
+
+        # Total cost given with 2 decimal places.
         return f'£{total_cost:.2f}'
-    
+
     def take_name(self):
+        '''
+        Take user input of name to collect order under.
+        '''
         while True:
-            name = input('Enter name: ')
+
+            name = input('Enter name:\n')
+
             try:
+                # Check input field was not left blank; a name is required to collect order.
                 len(name) >= 1
             except:
                 print('A collection name is required.')
             else:
+                # Once a valid (not empty) string is given, assign to name attribute.
                 self.name = name
+                # Resume script progression.
                 break
-    
+
     def make_record(self, cost):
+        '''
+        Add customer's collection name, ordered dishes, and total cost to spreadsheet,
+        to assist with record keeping regarding product sales and income.
+        '''
         target_worksheet = SHEET.worksheet('record')
-        target_worksheet.append_row([self.name, ', '.join(self.items), cost])
+        target_worksheet.append_row([self.name, '\n'.join(self.items), cost])
+
 
 def to_prepare(items):
+    '''
+    Remind user what dishes now need to be prepared for the customer.
+    '''
     for item in items:
         print(item)
 
+
 def main():
+    '''
+    Run all program functions.
+    '''
     new_order = Order()
     items = new_order.take_order()
     cost = new_order.calculate_cost()

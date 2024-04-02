@@ -1,3 +1,5 @@
+# Dictionary of current dish numbers/descriptions and their prices.
+# Could straightforwardly be expanded to include hundreds of dishes.
 menu_items = {
     '1 - crispy aromatic duck': 12.00,
     '2 - deep fried crispy seaweed': 3.80,
