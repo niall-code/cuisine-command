@@ -81,17 +81,19 @@ class Order:
 
     def take_name(self):
         '''
-        Take user input of name to collect order under.
+        Take user input of surname to collect order under.
         '''
         while True:
 
-            name = input('Enter name:\n')
+            # User enters surname given by customer for collection purposes.
+            # User should not include hyphens, accents, numbers, or other non-letters.
+            name = input('Enter surname:\n')
 
             try:
-                # Check input field was not left blank; a name is required to collect order.
-                len(name) >= 1
+                # Check input field is letters only and was not left blank.
+                name.isalpha()
             except:
-                print('A collection name is required.')
+                print('A collection name is required. It must be letters only.')
             else:
                 # Once a valid (not empty) string is given, assign to name attribute.
                 self.name = name
