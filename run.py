@@ -2,14 +2,9 @@
 # To enable API use.
 import gspread
 from google.oauth2.service_account import Credentials
-
 # For autocompletion of user input.
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
-
-# The product menu - from supplementary .py file within project.
-from menu import menu_items
-
 
 # Connect APIs to enable interaction with spreadsheet.
 # As demonstrated in Code Institute's Python Essentials walkthrough project.
@@ -23,7 +18,6 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('food_orders')
 
-
 class Order:
     '''
     Create an instance of Order,
@@ -34,7 +28,7 @@ class Order:
         self.name = ''
         self.items = []
 
-    def take_order(self):
+    def take_order(self, menu_items):
         '''
         Take user input, with autocomplete suggestions from the menu.
         Repeat for each item customer orders. User enters x to end loop.
@@ -66,7 +60,7 @@ class Order:
 
         return self.items
 
-    def calculate_cost(self):
+    def calculate_cost(self, menu_items):
         '''
         Get prices of ordered items from dictionary in menu module.
         Sum the prices to give a total cost.
@@ -108,7 +102,6 @@ class Order:
         target_worksheet = SHEET.worksheet('record')
         target_worksheet.append_row([self.name, '\n'.join(self.items), cost])
 
-
 def to_prepare(items):
     '''
     Remind user what dishes now need to be prepared for the customer.
@@ -116,14 +109,29 @@ def to_prepare(items):
     for item in items:
         print(item)
 
+def get_menu():
+    print('Menu is loading.')
+
+    dishes = SHEET.worksheet('menu').col_values(1)
+    prices = SHEET.worksheet('menu').col_values(2)
+
+    menu_items = {}
+    
+    for dish, price in zip(dishes, prices):
+        menu_items[dish] = price
+
+    print('Menu has loaded.')
+
+    return menu_items
 
 def main():
     '''
     Run all program functions.
     '''
     new_order = Order()
-    items = new_order.take_order()
-    cost = new_order.calculate_cost()
+    menu_items = get_menu()
+    items = new_order.take_order(menu_items)
+    cost = new_order.calculate_cost(menu_items)
     new_order.take_name()
     new_order.make_record(cost)
     to_prepare(items)
