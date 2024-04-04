@@ -55,7 +55,8 @@ class Order:
 
             # If user enters x, exit loop to resume progression through the script.
             if item == 'x':
-                quit = True
+                if self.items == False:
+                    quit = True
             else:
                 try:
                     # Check whether input is a valid menu item.
@@ -85,7 +86,8 @@ class Order:
         '''
         Take user input of surname to collect order under.
         '''
-        while True:
+        given = False
+        while given == False:
 
             # User enters surname given by customer for collection purposes.
             # User should not include hyphens, accents, numbers, or other non-letters.
@@ -100,7 +102,7 @@ class Order:
                 # Once a valid (not empty) string is given, assign to name attribute.
                 self.name = name
                 # Resume script progression.
-                break
+                given = True
 
     def make_record(self, cost):
         '''
