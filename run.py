@@ -6,6 +6,9 @@ from google.oauth2.service_account import Credentials
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 
+from colorama import Fore, init
+init(autoreset=True)
+
 # Connect APIs to enable interaction with spreadsheet.
 # As demonstrated in Code Institute's Python Essentials walkthrough project.
 CREDS = Credentials.from_service_account_file('creds.json')
@@ -110,15 +113,15 @@ def to_prepare(items):
         print(item)
 
 def get_menu():
-    print('Menu is loading.')
+    print(Fore.RED + 'Menu is loading.')
 
     dishes = SHEET.worksheet('menu').col_values(1)
     prices = SHEET.worksheet('menu').col_values(2)
 
     menu_items = {}
-    
+
     for dish, price in zip(dishes, prices):
-        menu_items[dish] = price
+        menu_items[dish] = float(price)
 
     print('Menu has loaded.')
 
@@ -130,6 +133,7 @@ def main():
     '''
     new_order = Order()
     menu_items = get_menu()
+    print(menu_items)
     items = new_order.take_order(menu_items)
     cost = new_order.calculate_cost(menu_items)
     new_order.take_name()
