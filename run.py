@@ -11,6 +11,8 @@ init(autoreset=True)
 
 import os
 
+from tabulate import tabulate
+
 # Connect APIs to enable interaction with spreadsheet.
 # As demonstrated in Code Institute's Python Essentials walkthrough project.
 CREDS = Credentials.from_service_account_file('creds.json')
@@ -108,12 +110,13 @@ class Order:
         target_worksheet = SHEET.worksheet('record')
         target_worksheet.append_row([self.name, '\n'.join(self.items), cost])
 
-def to_prepare(items):
+def to_prepare(name, items, cost):
     '''
     Remind user what dishes now need to be prepared for the customer.
     '''
-    for item in items:
-        print(item)
+    headers = ['Name', 'Items ordered', 'Cost']
+    table = [name, '\n'.join(items), cost]
+    print(tabulate(table, headers, tablefmt='pretty'))
 
 def get_menu():
     print(Fore.RED + 'Menu is loading.')
@@ -145,8 +148,8 @@ def main():
     print(menu_items)
     items = new_order.take_order(menu_items)
     cost = new_order.calculate_cost(menu_items)
-    new_order.take_name()
+    name = new_order.take_name()
     new_order.make_record(cost)
-    to_prepare(items)
+    to_prepare(name, items, cost)
 
 main()
