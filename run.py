@@ -42,7 +42,8 @@ class Order:
 
         menu = WordCompleter(menu_items)
 
-        while True:
+        quit = False
+        while quit == False:
 
             # Take user input of the first/next ordered menu item.
             # User should type menu item's dish number, press down arrow to highlight correct suggestion, then press Enter.
@@ -50,7 +51,7 @@ class Order:
 
             # If user enters x, exit loop to resume progression through the script.
             if item == 'x':
-                break
+                quit = True
             else:
                 try:
                     # Check whether input is a valid menu item.
