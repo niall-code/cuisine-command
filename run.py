@@ -9,6 +9,8 @@ from prompt_toolkit.completion import WordCompleter
 from colorama import Fore, init
 init(autoreset=True)
 
+import os
+
 # Connect APIs to enable interaction with spreadsheet.
 # As demonstrated in Code Institute's Python Essentials walkthrough project.
 CREDS = Credentials.from_service_account_file('creds.json')
@@ -127,6 +129,12 @@ def get_menu():
     print('Menu has loaded.')
 
     return menu_items
+
+def clear_terminal():
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
 
 def main():
     '''
