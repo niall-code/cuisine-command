@@ -152,7 +152,7 @@ def title_banner():
 
     # Made with https://www.ascii-art-generator.org/
 
-    print(Fore.BLUE + r'''
+    print(Fore.GREEN + r'''
  _     ___  __ ___       _    _  _                       _
 /  | |  |  (_   |  |\ | |_   /  / \ |\/| |\/|  /\  |\ | | \
 \_ |_| _|_ __) _|_ | \| |_   \_ \_/ |  | |  | /--\ | \| |_/ ''')
