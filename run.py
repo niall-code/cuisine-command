@@ -69,7 +69,7 @@ class Order:
                 try:
                     # Check whether input is a valid menu item.
                     menu_items[item]
-                except Exception:
+                except KeyError:
                     # Red text for invalidity message.
                     print(Fore.RED + 'Sorry, that is not a valid menu item.')
                 else:
@@ -106,10 +106,11 @@ class Order:
 
             try:
                 # Check input field is letters only and was not left blank.
-                name.isalpha()
-            except Exception:
+                if not name.isalpha():
+                    raise TypeError('A letters-only name is required.')
+            except TypeError as e:
                 # Red text for invalidity message.
-                print(Fore.RED + 'A letters-only collection name is required.')
+                print(Fore.RED + f'{e}')
             else:
                 # Once a valid (not empty) string is given, assign to name
                 # attribute.
