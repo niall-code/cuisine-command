@@ -2,15 +2,14 @@
 # To enable API use.
 import gspread
 from google.oauth2.service_account import Credentials
+# System, for clearing terminal.
+import os
+# For coloring of certain terminal text.
+from colorama import Fore, init
 # For autocompletion of user input.
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
-
-from colorama import Fore, init
-init(autoreset=True)
-
-import os
-
+# For order summary in table format.
 from tabulate import tabulate
 
 # Connect APIs to enable interaction with spreadsheet.
@@ -24,6 +23,9 @@ SCOPE = [
 SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('food_orders')
+
+# Auto-reset to default color after each colorama use.
+init(autoreset=True)
 
 class Order:
     '''
@@ -51,27 +53,34 @@ class Order:
 
             # Take user input of the first/next ordered menu item.
             # User should type menu item's dish number, press down arrow to highlight correct suggestion, then press Enter.
-            item = prompt('Enter menu item:\n', completer=menu)
+            item = prompt('\nEnter menu item:\n', completer=menu)
 
             # If user enters x, exit loop to resume progression through the script.
+            # At least one menu item must have been entered first.
             if item == 'x':
-                if self.items == False:
+                if len(self.items) >= 1:
                     quit = True
+                else:
+                    # Red text for invalidity message.
+                    print(Fore.RED + 'An order must have at least one item.')
             else:
                 try:
                     # Check whether input is a valid menu item.
                     menu_items[item]
                 except:
-                    print('Sorry, that is not a menu item.')
+                    # Red text for invalidity message.
+                    print(Fore.RED + 'Sorry, that is not a valid menu item.')
                 else:
                     # If input was valid, append to list value of items attribute.
                     self.items.append(item)
+                    clear_terminal()
+                    title_banner()
 
         return self.items
 
     def calculate_cost(self, menu_items):
         '''
-        Get prices of ordered items from dictionary in menu module.
+        Get prices of ordered items from menu_items dictionary.
         Sum the prices to give a total cost.
         '''
         total_cost = 0
@@ -84,44 +93,53 @@ class Order:
 
     def take_name(self):
         '''
-        Take user input of surname to collect order under.
+        Take user input of surname for customer to collect order with.
         '''
         given = False
         while given == False:
 
             # User enters surname given by customer for collection purposes.
             # User should not include hyphens, accents, numbers, or other non-letters.
-            name = input('Enter surname:\n')
+            name = input('\nEnter surname:\n')
 
             try:
                 # Check input field is letters only and was not left blank.
                 name.isalpha()
             except:
-                print('A collection name is required. It must be letters only.')
+                # Red text for invalidity message.
+                print(Fore.RED + 'A collection name is required. It must be letters only.')
             else:
                 # Once a valid (not empty) string is given, assign to name attribute.
                 self.name = name
                 # Resume script progression.
                 given = True
+        
+        return self.name
 
     def make_record(self, cost):
         '''
-        Add customer's collection name, ordered dishes, and total cost to spreadsheet,
+        Add customer's collection name, ordered dishes, and total cost to worksheet,
         to assist with record keeping regarding product sales and income.
         '''
         target_worksheet = SHEET.worksheet('record')
         target_worksheet.append_row([self.name, '\n'.join(self.items), cost])
 
-def to_prepare(name, items, cost):
-    '''
-    Remind user what dishes now need to be prepared for the customer.
-    '''
-    headers = ['Name', 'Items ordered', 'Cost']
-    table = [name, '\n'.join(items), cost]
-    print(tabulate(table, headers, tablefmt='pretty'))
+def clear_terminal():
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
+
+def title_banner():
+    print(Fore.BLUE + r'''  _____      _     _               _____                                          _ 
+    / ____|    (_)   (_)             / ____|                                        | |
+    | |    _   _ _ ___ _ _ __   ___  | |     ___  _ __ ___  _ __ ___   __ _ _ __   __| |
+    | |   | | | | / __| | '_ \ / _ \ | |    / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |
+    | |___| |_| | \__ \ | | | |  __/ | |___| (_) | | | | | | | | | | | (_| | | | | (_| |
+    \_____\__,_|_|___/_|_| |_|\___|  \_____\___/|_| |_| |_|_| |_| |_|\__,_|_| |_|\__,_| ''')
 
 def get_menu():
-    print(Fore.RED + 'Menu is loading.')
+    print('\nMenu is loading.')
 
     dishes = SHEET.worksheet('menu').col_values(1)
     prices = SHEET.worksheet('menu').col_values(2)
@@ -135,30 +153,32 @@ def get_menu():
 
     return menu_items
 
-def clear_terminal():
-    if os.name == 'nt':
-        os.system('cls')
-    else:
-        os.system('clear')
+def to_prepare(name, items, cost):
+    '''
+    Remind user what dishes now need to be prepared for the customer.
+    '''
+    table = [['NAME', 'ITEMS ORDERED', 'COST'],
+             [name, '\n'.join(items), cost]]
+    print('\n' + tabulate(table, tablefmt='pretty'))
 
 def main():
     '''
     Run all program functions.
     '''
+    clear_terminal()
+    title_banner()
     new_order = Order()
     menu_items = get_menu()
-    print(menu_items)
     items = new_order.take_order(menu_items)
     cost = new_order.calculate_cost(menu_items)
+    clear_terminal()
+
+    title_banner()
     name = new_order.take_name()
     new_order.make_record(cost)
-    to_prepare(name, items, cost)
+    clear_terminal()
 
-print(r'''  _____      _     _               _____                                          _ 
- / ____|    (_)   (_)             / ____|                                        | |
-| |    _   _ _ ___ _ _ __   ___  | |     ___  _ __ ___  _ __ ___   __ _ _ __   __| |
-| |   | | | | / __| | '_ \ / _ \ | |    / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |
-| |___| |_| | \__ \ | | | |  __/ | |___| (_) | | | | | | | | | | | (_| | | | | (_| |
- \_____\__,_|_|___/_|_| |_|\___|  \_____\___/|_| |_| |_|_| |_| |_|\__,_|_| |_|\__,_| ''')
+    title_banner()
+    to_prepare(name, items, cost)
 
 main()
