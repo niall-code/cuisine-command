@@ -50,7 +50,7 @@ class Order:
         menu = WordCompleter(menu_items)
 
         quit = False
-        if not quit:
+        while not quit:
 
             # Take user input of the first/next ordered menu item.
             # User should type menu item's dish number, press down arrow to
@@ -97,7 +97,7 @@ class Order:
         Take user input of surname for customer to collect order with.
         '''
         given = False
-        if not given:
+        while not given:
 
             # User enters surname given by customer for collection purposes.
             # User should not include hyphens, accents, numbers, or other
