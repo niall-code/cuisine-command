@@ -27,13 +27,15 @@ SHEET = GSPREAD_CLIENT.open('food_orders')
 # Auto-reset to default color after each colorama use.
 init(autoreset=True)
 
+
 class Order:
     '''
     Create an instance of Order,
     which shall be assigned to new_order.
     '''
     def __init__(self):
-        # Values initially empty string and list, to be replaced/appended to by user inputs.
+        # Values initially empty string and list, to be replaced/appended to by
+        # user inputs.
         self.name = ''
         self.items = []
 
@@ -48,14 +50,15 @@ class Order:
         menu = WordCompleter(menu_items)
 
         quit = False
-        while quit == False:
+        if not quit:
 
             # Take user input of the first/next ordered menu item.
-            # User should type menu item's dish number, press down arrow to highlight correct suggestion, then press Enter.
+            # User should type menu item's dish number, press down arrow to
+            # highlight correct suggestion, then press Enter.
             item = prompt('\nEnter menu item:\n', completer=menu)
 
-            # If user enters x, exit loop to resume progression through the script.
-            # At least one menu item must have been entered first.
+            # If user enters x, exit loop to resume progression through the
+            # script. At least one menu item must have been entered first.
             if item == 'x':
                 if len(self.items) >= 1:
                     quit = True
@@ -66,11 +69,12 @@ class Order:
                 try:
                     # Check whether input is a valid menu item.
                     menu_items[item]
-                except:
+                except Exception:
                     # Red text for invalidity message.
                     print(Fore.RED + 'Sorry, that is not a valid menu item.')
                 else:
-                    # If input was valid, append to list value of items attribute.
+                    # If input was valid, append to list value of items
+                    # attribute.
                     self.items.append(item)
                     clear_terminal()
                     title_banner()
@@ -95,33 +99,36 @@ class Order:
         Take user input of surname for customer to collect order with.
         '''
         given = False
-        while given == False:
+        if not given:
 
             # User enters surname given by customer for collection purposes.
-            # User should not include hyphens, accents, numbers, or other non-letters.
+            # User should not include hyphens, accents, numbers, or other
+            # non-letters.
             name = input('\nEnter surname:\n')
 
             try:
                 # Check input field is letters only and was not left blank.
                 name.isalpha()
-            except:
+            except Exception:
                 # Red text for invalidity message.
-                print(Fore.RED + 'A collection name is required. It must be letters only.')
+                print(Fore.RED + 'A letters-only collection name is required.')
             else:
-                # Once a valid (not empty) string is given, assign to name attribute.
+                # Once a valid (not empty) string is given, assign to name
+                # attribute.
                 self.name = name
                 # Resume script progression.
                 given = True
-        
+
         return self.name
 
     def make_record(self, cost):
         '''
-        Add customer's collection name, ordered dishes, and total cost to worksheet,
+        Add customer's surname, ordered dishes, and total cost to worksheet,
         to assist with record keeping regarding product sales and income.
         '''
         target_worksheet = SHEET.worksheet('record')
         target_worksheet.append_row([self.name, '\n'.join(self.items), cost])
+
 
 def clear_terminal():
     '''
@@ -137,6 +144,7 @@ def clear_terminal():
         # Mac or Linux
         os.system('clear')
 
+
 def title_banner():
     '''
     Print the ASCII art title banner, colored blue.
@@ -144,12 +152,11 @@ def title_banner():
 
     # Made with https://www.ascii-art-generator.org/
 
-    print(Fore.BLUE + r'''  _____      _     _               _____                                          _ 
-    / ____|    (_)   (_)             / ____|                                        | |
-    | |    _   _ _ ___ _ _ __   ___  | |     ___  _ __ ___  _ __ ___   __ _ _ __   __| |
-    | |   | | | | / __| | '_ \ / _ \ | |    / _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |
-    | |___| |_| | \__ \ | | | |  __/ | |___| (_) | | | | | | | | | | | (_| | | | | (_| |
-    \_____\__,_|_|___/_|_| |_|\___|  \_____\___/|_| |_| |_|_| |_| |_|\__,_|_| |_|\__,_| ''')
+    print(Fore.BLUE + r'''
+ _     ___  __ ___       _    _  _                       _
+/  | |  |  (_   |  |\ | |_   /  / \ |\/| |\/|  /\  |\ | | \
+\_ |_| _|_ __) _|_ | \| |_   \_ \_/ |  | |  | /--\ | \| |_/ ''')
+
 
 def get_menu():
     '''
@@ -169,6 +176,7 @@ def get_menu():
 
     return menu_items
 
+
 def to_prepare(name, items, cost):
     '''
     Remind user what dishes now need to be prepared for the customer.
@@ -176,6 +184,7 @@ def to_prepare(name, items, cost):
     table = [['NAME', 'ITEMS ORDERED', 'COST'],
              [name, '\n'.join(items), cost]]
     print('\n' + tabulate(table, tablefmt='pretty'))
+
 
 def main():
     '''
@@ -198,5 +207,6 @@ def main():
 
     title_banner()
     to_prepare(name, items, cost)
+
 
 main()
