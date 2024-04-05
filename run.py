@@ -4,12 +4,12 @@ import gspread
 from google.oauth2.service_account import Credentials
 # System, for clearing terminal.
 import os
-# For coloring of certain terminal text.
+# For coloring of certain terminal text. https://pypi.org/project/colorama/
 from colorama import Fore, init
-# For autocompletion of user input.
+# For autocompletion of user input. https://pypi.org/project/prompt-toolkit/
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
-# For order summary in table format.
+# For order summary in table format. https://pypi.org/project/tabulate/
 from tabulate import tabulate
 
 # Connect APIs to enable interaction with spreadsheet.
@@ -43,7 +43,6 @@ class Order:
         Repeat for each item customer orders. User enters x to end loop.
         '''
 
-        # prompt_toolkit was created primarily by Jonathan Slenders (https://github.com/jonathanslenders).
         # https://python-prompt-toolkit.readthedocs.io/en/stable/pages/asking_for_input.html#autocompletion
 
         menu = WordCompleter(menu_items)
@@ -125,12 +124,26 @@ class Order:
         target_worksheet.append_row([self.name, '\n'.join(self.items), cost])
 
 def clear_terminal():
+    '''
+    Clear the terminal.
+    '''
+
+    # Learnt from https://www.geeksforgeeks.org/clear-screen-python/
+
     if os.name == 'nt':
+        # Windows
         os.system('cls')
     else:
+        # Mac or Linux
         os.system('clear')
 
 def title_banner():
+    '''
+    Print the ASCII art title banner, colored blue.
+    '''
+
+    # Made with https://www.ascii-art-generator.org/
+
     print(Fore.BLUE + r'''  _____      _     _               _____                                          _ 
     / ____|    (_)   (_)             / ____|                                        | |
     | |    _   _ _ ___ _ _ __   ___  | |     ___  _ __ ___  _ __ ___   __ _ _ __   __| |
@@ -139,6 +152,9 @@ def title_banner():
     \_____\__,_|_|___/_|_| |_|\___|  \_____\___/|_| |_| |_|_| |_| |_|\__,_|_| |_|\__,_| ''')
 
 def get_menu():
+    '''
+    Retrieve menu from worksheet. Convert into dictionary.
+    '''
     print('\nMenu is loading.')
 
     dishes = SHEET.worksheet('menu').col_values(1)
@@ -165,6 +181,7 @@ def main():
     '''
     Run all program functions.
     '''
+    # Clear terminal in case not the first time program run.
     clear_terminal()
     title_banner()
     new_order = Order()
@@ -173,6 +190,7 @@ def main():
     cost = new_order.calculate_cost(menu_items)
     clear_terminal()
 
+    # Reprint banner after terminal cleared.
     title_banner()
     name = new_order.take_name()
     new_order.make_record(cost)
