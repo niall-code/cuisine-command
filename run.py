@@ -76,8 +76,6 @@ class Order:
                     # If input was valid, append to list value of items
                     # attribute.
                     self.items.append(item)
-                    clear_terminal()
-                    title_banner()
 
         return self.items
 
@@ -147,7 +145,7 @@ def clear_terminal():
 
 def title_banner():
     '''
-    Print the ASCII art title banner, colored blue.
+    Print the ASCII art title banner, colored green.
     '''
 
     # Made with https://www.ascii-art-generator.org/
