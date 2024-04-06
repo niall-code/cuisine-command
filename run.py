@@ -107,8 +107,8 @@ class Order:
             try:
                 # Check input field is letters only and was not left blank.
                 if not name.isalpha():
-                    raise TypeError('A letters-only name is required.')
-            except TypeError as e:
+                    raise Exception('A letters-only name is required.')
+            except Exception as e:
                 # Red text for invalidity message.
                 print(Fore.RED + f'{e}')
             else:

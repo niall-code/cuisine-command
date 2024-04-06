@@ -1,97 +1,138 @@
 # Cuisine Command
 
-Cuisine Command is a Python command line application for use by a takeaway restaurant.
+Cuisine Command is a Python command line application for use by a takeaway restaurant. It runs in a Heroku-hosted mock terminal designed by Code Institute. It uses Google Cloud-provided APIs to communicate with Google Sheets worksheets. The program would be operated by an employee of the restaurant, taking customer orders over a phone call.
+
+The restaurant is assumed to be collection only, rather than delivery, and to take payment at time of collection. The customer is assumed to already be aware of what dishes are sold and their assigned dish numbers, either through possession of a hard copy menu leaflet or through perusal of a separate customer-facing website. However, all an assessor will need to know is that the available dish numbers are currently 1 through 15.
+
+[The deployed project can be found here.](https://cuisine-command-7bf263233a6e.herokuapp.com/)
+
+![multi device mockup](screencaps/am-i-responsive.webp)
+
+## Features/How to use
+
+### 1. Title banner & Loading menu
+
+When the program first runs, the green title banner is printed across the top. It adds some visual interest and displays the program name, without being distracting from the more important terminal contents below.
+
+With APIs, the menu is retrieved from Google Sheets. It is converted into a dictionary. When the process begins, "Menu is loading" is printed. When the short process has completed, "Menu has loaded" is printed. (Through testing, I found that fetching columns and using a zip method was multiple seconds faster than fetching rows and using a for loop.)
+
+![menu loaded screenshot](screencaps/menu-loading.webp)
+
+The menu is located in a 'menu' worksheet of the food_orders spreadsheet. This means that it would be simple for the restaurant to expand or alter the menu without the developer's help. They should be mindful though to begin the new dish description with an appropriate number, else searching by dish number could be impeded.
+
+![menu worksheet](screencaps/menu-worksheet.webp)
+
+### 2. Order input & Live suggestions
+
+![the take order method](screencaps/take-order.webp)
+
+Image A - The customer on the phone tells the restaurant worker/program user the dish number of the first item they want to order. The user presses that number and a dropdown of suggestions appears. (Currently, the existing dish numbers are 1 through 15.)
+
+Image B - The user presses the down arrow to highlight the correct menu item.
+
+Image C - The user presses Enter and is asked for the customer's next desired product.
+
+Image D - If the user enters something that is not a valid menu item (i.e., does not exactly match any menu_items dictionary key), red text informs the user of the problem. The next product is again asked for.
+
+Image E - The exemption to that rule is when the user enters just the letter x . This should be done when the customer has no more items they wish to order, and is necessary for ending the loop and progressing to the next stage.
+
+x is a relatively intuitive character for exiting the loop, as clicking an x symbol is frequently associated with closing or leaving something. The fact that it is an alphabetical character is not problematic in this particular case, because all other valid inputs a. start with a number and b. are chosen from specific options.
+
+Image F - However, if x is entered before any menu items have been entered, red text informs the user that an order requires at least one ordered item. The user is again prompted to enter one.
+
+### 3. Name input
+
+![the take name method](screencaps/take-name.webp)
+
+Image A - The customer tells the restaurant worker/program user their surname, for meal collection purposes.
+
+Image B - The user types in the name and presses Enter. Only letters will be valid (not numbers, spaces, or punctuation). If the customer gives a double-barrelled surname, a hyphen should not be inputted. PascalCase can be used instead.
+
+Accurate spelling of the customer's name is not very important, as long as the input is a reasonable approximation of the sound of the name (because it is solely for them to say their name when they pick up their order).
+
+Image C - If invalid characters are entered, or if no name at all is entered, red text alerts the user. The user is again prompted to enter a name.
+
+### 4. Order summary & Worksheet recording
+
+Finally, a table-form summary of the order is printed, reminding the restaurant staff which items they should now cook or otherwise prepare for sale. In the background, the prices of the items have already been added together, and the total cost is included in this summary.
+
+![the to prepare method](screencaps/to-prepare.webp)
+
+A record of this order has additionally been sent to a 'record' worksheet in the food_orders spreadsheet, contributing to the restaurant's monitoring of their business operations.
+
+![record worksheet](screencaps/taylors-order.webp)
+
+If the user wishes to repeat the process for another customer shortly after, they can simply click an orange "RUN PROGRAM" button above the mock terminal to run the program again from the beginning.
 
 ## Development
 
-### Consulting mentor
+### Hooking up APIs
 
-I had a meeting with my Code Institute mentor, Rahul Lakhanpal. Out of four project ideas that I suggested, he advised that the takeaway restaurant ordering system was likely the best option for showing my abilities and for trying to create a product with some potential for real-world application and value. I was inclined to agree.
+I created a GitHub repository from Code Institute's [project template](https://github.com/Code-Institute-Org/p3-template), cloned my repository in VS Code, established a virtual environment, and created the Google Sheets spreadsheet. I created a Google Cloud project, enabled a Google Drive API, created credentials and a service account, and created a JSON key. I also enabled a Google Sheets API. I dragged the file of the JSON key into my workspace, renamed it 'creds', copied the client email address from it, shared my spreadsheet to that address, and named `creds.json` in the gitignore. I then added the required code in `run.py` to set up the APIs for interaction between the Python script and the spreadsheet.
 
-When I raised the apparent requirement for the project to include classes, he suggested that the menu items and the orders received could be suitable for treatment as classes.
+### The Menu Saga
 
-He also mentioned [Ascii Art Generator](https://www.ascii-art-generator.org), [Tabulate](https://pypi.org/project/tabulate), [Colorama](https://pypi.org/project/colorama), and [Cerberus](https://docs.python-cerberus.org), for me to look at and consider making use of.
+My menu has evolved several times. At first, it was a class with a large number of instances. Then, it was a dictionary in a separate `menu.py` file, imported into `run.py`. Now, it is two columns of data in a worksheet, retrieved and converted into a dictionary when the script is run.
 
-### Setting up
+### Prompt Toolkit
 
-I created a GitHub repository from Code Institute's [project template](https://github.com/Code-Institute-Org/p3-template), cloned my repository, and created a virtual environment.
+Discovering `prompt_toolkit` was the product of much research and experimentation, with several alternatives being tried before finding the solution that matched the functionality I had imagined regarding live suggestions and autocompletion. To avoid possibly impacting my workspace with lots of installs that might end up not being used in the project, I experimented in a new window with its own virtual environment and Python scripts.
 
-I created a Google Sheets spreadsheet.
+## Testing
 
-I created a Google Cloud project, enabled a Google Drive API, created credentials and a service account, and created a JSON key. I also enabled a Google Sheets API.
+I tested frequently during development by running the code to see how it behaved, making adjustments where needed.
 
-I dragged the file of the JSON key into my workspace, renamed it 'creds', copied the client email address from it, shared my spreadsheet to that address, and added 'creds.json' to the gitignore.
+![Python linter](screencaps/linter.webp)
 
-I installed gspread and google-auth in my workspace and imported them in the Python script. I pasted in the SCOPE constant, as I had used during Code Institute's "Love Sandwiches" walkthrough project. I used methods of Credentials (from google-auth) and of gspread to give my application access to the external spreadsheet, as demonstrated in the walkthrough project.
+Towards the end of development, I passed my code to a Python linter and removed every issue found.
 
-After the commit, I realised that I had supplied an incorrect name of the spreadsheet to be opened, but it was easily edited and recommitted.
+A majority of those fixes were simply splitting a comment onto the next line or adding a second blank line between functions. Additionally, I recreated the ASCII art to get it narrow enough, addressed bare exceptions, and changed the logic `while quit == False` first to `if not quit` (on the apparent advice of the linter) then to `while not quit` after I found that it had broken my code.
 
-### Creating classes
+## Deployment to Heroku
 
-I added 'Name', 'Items ordered', and 'Cost' column headings to my spreadsheet.
+The deployment was straightforward. I populated my `requirements.txt` with the result of a `py -m pip freeze` in the terminal, I made sure my GitHub repository was up to date, then in Heroku, I created a new app, chose to deploy from my GitHub and selected its appropriate repository, copied in the credentials from the git-ignored `creds.json` and added the right port number, and specified the suitable buildpacks.
 
-I created the MenuItem and Order classes. I defined the confirm method of the Order class. I added temporary dummy instances and a printed method call to test run the script so far, as captured from line 43 onward in my repository's fourth commit (the first commit on Mar 27, 2024).
+![config vars](screencaps/config-vars.webp)
 
-### ~~Creating instances~~ Adding menu.py
+![buildpacks](screencaps/buildpacks.webp)
 
-I had created multiple instances of the MenuItem class. For realism and convenience, I based my foods and prices on a menu leaflet from a local takeaway restaurant.
+Here is the deployed project: [Cuisine Command](https://cuisine-command-7bf263233a6e.herokuapp.com/)
 
-<img src="screencaps/mi-instances.webp" alt="instances of MenuItem class" width="750px">
+After deployment, I continued testing, making and committing changes, and re-deploying to Heroku, until I was satisfied enough to submit the project.
 
-(This screen capture was taken with VS Code's CodeSnap extension, published by adpyke.)
+## Credits
 
-However, I then had a couple of ideas that would impact the development of my project:
+- Code Institute's [Project 3 Template](https://github.com/Code-Institute-Org/p3-template) was used to create the mock terminal for the deployed project to run in.
 
-- I questioned whether creating a huge number of instances when `run.py` first runs is the best approach, or whether dictionaries would be more suitable for the menu.
+- [Rahul Lakhanpal](https://github.com/rahulkp220), my Code Institute mentor, provided general support in solidifying my ideas and tackling the project's challenges. His largest specific influence on the project was pointing out that a menu in a Python file could only be amended by the developer and that a menu drawn from a worksheet would avoid that problem. He also directed me towards ASCII Art Generator, Colorama, and Tabulate.
 
-- It occurred to me that it should be possible to put the menu in a separate Python file and import it, avoiding cluttering up the main script.
+- How to set up APIs for communication with Google Sheets was learnt from Code Institute's "Love Sandwiches" walkthrough project.
 
-I experimented by adding Meal A and Meal B as a dictionary of dictionaries, followed by a temporary
+- Code Institute's [Python Linter](https://pep8ci.herokuapp.com/) was used to check my code for issues.
 
-`print(menu_items['Meal A']['foods'][0])`
+- My method of converting the menu from worksheet data into a Python dictionary was partially based on [this Stack Overflow forum page](https://stackoverflow.com/questions/48071406/convert-columns-of-an-excel-into-dictionary-in-python).
 
-and then ran the script. As predicted, the terminal printed 'Sweet & Sour Chicken'. I then created `menu.py` , moved the dictionary into it, added an import at the top of `run.py` , and ran it again. It still worked, confirming that an imported dictionary should be a viable approach. At this point, the MenuItem class could be deleted.
+- [ASCII Art Generator](https://www.ascii-art-generator.org/) was used to create the title banner.
 
-I made an adjustment to the for loop in Order's confirm method to account for this new situation, replacing the dot notation with square brackets - very similar to my experiment above.
+- How to print ASCII art was learnt from [this Stack Overflow forum page](https://stackoverflow.com/questions/23623288/print-full-ascii-art).
 
-At this time, I also created a 'screencaps' folder, solely for screen captures included in this README. All images will have been optimized with [Tiny PNG](https://tinypng.com).
+- [Colorama](https://pypi.org/project/colorama/) was used to color the title banner green and to color validation failure messages red.
 
-### Planning for autocompletion
+- How to auto-reset color after Colorama use was learnt through [this Stack Overflow forum page](https://stackoverflow.com/questions/43649051/a-way-to-not-have-to-reset-the-color-style-in-colorama-every-time) but is actually also in its PyPI documentation.
 
-I have been anticipating that autocompletion functionality might be necessary for the user input. Of its benefits, the largest would be that the user would not have to accurately type entire descriptions of dishes (e.g., "barbecued spare ribs with honey and lemon") but can just begin typing it and then select a suggested menu item.
+- [Tabulate](https://pypi.org/project/tabulate/) was used to present the order summary.
 
-I spent several hours researching possible ways of doing this and experimenting with them. To avoid potentially impacting my workspace and later my requirements file content with installs that might end up not being used in the project, I experimented in a new window with its own virtual environment and Python scripts.
+- [This YouTube video](https://youtu.be/u51Zjlnui4Y) about Colorama and [this YouTube video](https://youtu.be/Yq0lbu8goeA) about Tabulate were also consulted, complementing their official PyPI documentation.
 
-I looked at a number of options. For a while, [fast-autocomplete](https://pypi.org/project/fast-autocomplete) looked a promising one, but it seemed to only provide a suggestions list rather than actually completing a user input. I tried to combine it with [pick](https://github.com/wong2/pick) to finish the task, but ran into difficulties. Also, even if it had succeeded, live suggestions to select from while typing are far preferable.
+- [Prompt Toolkit](https://pypi.org/project/prompt-toolkit/) was used to provide live suggestions and autocompletion when inputting menu items. How to use Prompt Toolkit for these purposes was learnt from [this section of its documentation](https://python-prompt-toolkit.readthedocs.io/en/stable/pages/asking_for_input.html#autocompletion
+).
 
-I eventually found [this documentation](https://python-prompt-toolkit.readthedocs.io/en/stable/pages/asking_for_input.html#autocompletion). The solution it offered matched what I was searching for quite well, and my testing of it was very promising. prompt_toolkit was created primarily by Jonathan Slenders (https://github.com/jonathanslenders).
+- How to clear the terminal was learnt from [this web page](https://www.geeksforgeeks.org/clear-screen-python/).
 
-<img src="screencaps/test-of-auto.webp" alt="testing the prompt toolkit module" width="750px">
+- [Tiny PNG](https://tinypng.com/) was used to optimize the images in this README.
 
-(This screen capture was taken with CodeSnap.)
+- `screencaps/am-i-responsive.webp` was created with [Am I Responsive](https://ui.dev/amiresponsive).
 
-### Writing the menu
+- `screencaps/take-order.webp` , `take-name.webp` , and `config-vars.webp` were edited in Microsoft PowerPoint.
 
-I had been going to have my menu mirror a local takeaway's menu, as I would not have known what dishes and prices to make up. The menu had hundreds of dishes though, as did other menus that I looked for online. Typing out or even copy-pasting then editing hundreds of items would have been laborious and a time waster delaying writing the actual code of my project. Fifteen items should be sufficient to demonstrate the concept. Any number more could be added easily enough if the program ended up as going to be used in real life. I was paralysed by indecision of which items to arbitarily pick, so a relative circled some for me and I just went with those.
-
-I wrote the menu as a dictionary assigned to a `menu_items` variable in `menu.py`. Rather than having a complex dictionary of dictionaries, it is simply dishes as keys and prices as values. Each dish has an item number as the start of the string of its key. The hypothetical customer would say an item number, the worker using the program would type the number, and would have a chance to read out the dish description to confirm it before selecting it.
-
-### Adding user input functionality
-
-I did a `pip install prompt_toolkit`, imported it at the top of `run.py`, and added an autocompleting user input as taught in the documentation mentioned and linked above, and as already tested by myself like described. I had also checked that it would accept a dictionary from me as well just a list.
-
-### Add calculate_cost() method
-
-I deleted Order's confirm method, which was increasingly less relevant to the direction my project was moving in. I tweaked Order's init method to suit my new thoughts about input collection and sequence of events.
-
-I added a line of code that will append inputted items to an empty list in the items attribute of new_order, the current instance of Order.
-
-I added a `calculate_cost( )` method into the Order class that will retrieve the price of each of those items and add them together, so that the program user/restaurant worker can quote the customer a total cost over the phone and verbally confirm their acceptance of the amount they will be charged.
-
-### Add take_order() method
-
-I added a `take_order( )` method into the Order class, based on the previously outlined user input functionality.
-
-### Add take_name() method
-
-I added a `take_name( )` method into the Order class.
+- The menu items and prices were picked from a local restaurant's real menu.
