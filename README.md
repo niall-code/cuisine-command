@@ -18,7 +18,7 @@ With APIs, the menu is retrieved from Google Sheets. It is converted into a dict
 
 ![menu loaded screenshot](screencaps/menu-loading.webp)
 
-The menu is located in a 'menu' worksheet of the food_orders spreadsheet. This means that it would be simple for the restaurant to expand or alter the menu without the developer's help. They should be mindful though to begin the new dish description with an appropriate number, else searching by dish number could be impeded.
+The menu is located in a 'menu' worksheet of the food_orders spreadsheet. This means that it would be simple for the restaurant to expand or alter the menu without the developer's help. They should be mindful though to begin the new dish description with a # and an appropriate number, else searching by dish number could be impeded.
 
 ![menu worksheet](screencaps/menu-worksheet.webp)
 
@@ -26,7 +26,7 @@ The menu is located in a 'menu' worksheet of the food_orders spreadsheet. This m
 
 ![the take order method](screencaps/take-order.webp)
 
-Image A - The customer on the phone tells the restaurant worker/program user the dish number of the first item they want to order. The user presses that number and a dropdown of suggestions appears. (Currently, the existing dish numbers are 1 through 15.)
+Image A - The customer on the phone tells the restaurant worker/program user the dish number of the first item they want to order. The user presses # and then that number and a dropdown of suggestions appears. (Currently, the existing dish numbers are 1 through 15.) If the customer did not know the dish number, pressing # should allow the user to see a dropdown of the whole menu with each item's dish number.
 
 Image B - The user presses the down arrow to highlight the correct menu item.
 
@@ -99,6 +99,32 @@ The deployment was straightforward. I populated my `requirements.txt` with the r
 Here is the deployed project: [Cuisine Command](https://cuisine-command-7bf263233a6e.herokuapp.com/)
 
 After deployment, I continued testing, making and committing changes, and re-deploying to Heroku, until I was satisfied enough to submit the project.
+
+## Improvement for Resubmission
+
+### Knowing how to proceed
+
+I received assessor feedback that the UX was unclear. I had previously presumed that the step-by-step, screenshot-illustrated instructions in the readme would be looked at before the deployed project was tested, and that a hypothetical real-world user would similarly be trained in its use before touching it. However, I understand that it is desirable for adequate direction to also be given on screen during use - for example, in case the user partially forgets what to do and becomes delayed during a customer call.
+
+I have now addressed this by adding instructional print statements into the Order class's `take_order`and `take_name` methods. The on-screen instructions will ensure that the user knows what they need to, when they need to, about how to:
+
+- quickly input each menu item of the order (via the dish numbering and autocompletion - now improved by starting with # to see the whole menu, as described below)
+
+- move on when all chosen items have been inputted (by entering x)
+
+- and examples of things to avoid to input a valid name - only certain predictable inclusions are named explicitly but the potential error message says more broadly that the input must be letters only, which would also cover accidental key presses such as numbers and punctuation marks.
+
+### Clarity of error message
+
+The feedback also said that "Error handling...messaging is not clear to the user on the issue that their input is causing". I believe that this will have been closely related to the first problem. In other words, that neither the brief instruction before nor the error message after were sufficient to make clear what the user had been supposed to do. Therefore, the added instructions will have alleviated this issue also.
+
+However, the specificity of one of the error messages has been directly improved too, now reading "Input did not match any menu item" - rather than merely saying that the input was invalid. This can be seen on or near line 78 of `run.py`, within the `take_order` method.
+
+### Visibility of menu
+
+The feedback additionally noted that ideally the menu would be easier to access, which I took to mean that being able to see the full menu at once from within the program would be advantageous.
+
+I came up with the solution of adding a # symbol (used as shorthand for "number") before each dish number in the 'menu' worksheet of the `food_orders` spreadheet. This should mean that typing # when asked to input a menu item will cause `prompt_toolkit`'s live autocompletion to display a suggestions dropdown of the entire menu, not just the items beginning with 1 or another number. The user should therefore be able to see for themselves what numbers correspond to what dishes and select the desired menu items more easily. This improved functionality is included in the instructional print messages, as mentioned above.
 
 ## Credits
 

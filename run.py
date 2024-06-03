@@ -53,9 +53,13 @@ class Order:
         while not quit:
 
             # Take user input of the first/next ordered menu item.
-            # User should type menu item's dish number, press down arrow to
-            # highlight correct suggestion, then press Enter.
-            item = prompt('\nEnter menu item:\n', completer=menu)
+            # User should type # and menu item's dish number, press down arrow
+            # to highlight correct suggestion, then press Enter.
+
+            print('\nType # to see a dropdown menu, then type a dish number.')
+            print('Press the down arrow to highlight the dish, then Enter.')
+            print('If no more items to order, type x then press Enter.')
+            item = prompt('\nEnter first/next menu item:\n', completer=menu)
 
             # If user enters x, exit loop to resume progression through the
             # script. At least one menu item must have been entered first.
@@ -71,7 +75,7 @@ class Order:
                     menu_items[item]
                 except KeyError:
                     # Red text for invalidity message.
-                    print(Fore.RED + 'Sorry, that is not a valid menu item.')
+                    print(Fore.RED + 'Input did not match any menu item.')
                 else:
                     # If input was valid, append to list value of items
                     # attribute.
@@ -102,6 +106,9 @@ class Order:
             # User enters surname given by customer for collection purposes.
             # User should not include hyphens, accents, numbers, or other
             # non-letters.
+
+            print('\nType customer surname and press Enter.')
+            print('Do not use apostrophes, hyphens, spaces or accents.')
             name = input('\nEnter surname:\n')
 
             try:
@@ -180,6 +187,9 @@ def to_prepare(name, items, cost):
     '''
     Remind user what dishes now need to be prepared for the customer.
     '''
+
+    print('\nSummary of Completed Order')
+
     table = [['NAME', 'ITEMS ORDERED', 'COST'],
              [name, '\n'.join(items), cost]]
     print('\n' + tabulate(table, tablefmt='pretty'))
